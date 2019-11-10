@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: TradeItem
   m_EditorClassIdentifier: 
   itemName: Trading Item
-  itemIcon: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
+  itemIcon: {fileID: 21300000, guid: 6dbafd5de65eca04aa86a8d2bd17c826, type: 3}
   maxAmmo: -1
-  itemState: 0
+  itemState: 1

@@ -5,6 +5,8 @@ using System;
 
 public class MenuRotation : MonoBehaviour
 {
+    public event Action AnimationStarted = delegate { };
+    public event Action AnimationFinished = delegate { };
 
     [Header("Rotation settings")]
     [SerializeField] float rotationTime = 1f;
@@ -59,11 +61,14 @@ public class MenuRotation : MonoBehaviour
     }
 
 
-    // starts rotation sequence
+    // starts rotation sequence, called with direction from playerinput
     void StartRotation(Vector3 direction)
     {
         if (rotationDirection == Vector3.zero && MenuOpen == true)
         {
+            // sends action to coordinate cursor
+            AnimationStarted?.Invoke();
+
             rotationDirection = direction;
             timer = rotationTime;
         }  
@@ -92,7 +97,10 @@ public class MenuRotation : MonoBehaviour
 
         else if (MenuOpen == true)
         {
-            // activates close menu function in each subscreen, individual script will set MenuOpen to false
+            // sends action for closing, but there's no close loop, so cursor should stay hidden until next open
+            AnimationStarted?.Invoke();
+
+            // activates close menu function in each subscreen
             foreach (GameObject screen in subscreens)
             {
                 SubscreenAnimation animationScript = screen.GetComponent<SubscreenAnimation>();
@@ -120,6 +128,9 @@ public class MenuRotation : MonoBehaviour
                 transform.eulerAngles = new Vector3(transform.eulerAngles.x, startPosition + (rotationDirection.y * rotationDegrees), transform.eulerAngles.z);
                 startPosition = transform.eulerAngles.y;
                 rotationDirection = Vector3.zero;
+
+                // coordinates cursor
+                AnimationFinished?.Invoke();
             }
         }
     }

@@ -7,19 +7,15 @@ using System;
 [RequireComponent(typeof(Mask))]
 public class SubscreenAnimation : MonoBehaviour
 {
-
     [SerializeField] float rotationTime = 0.5f;
     [SerializeField] float rotationDegrees = 90f;
 
-    float rotationTarget;
-    float rotationDirection;
+    float rotationDirection = 0;
     float opacityTimer = 0;
 
     Vector3 startLocalPosition;
     Quaternion startLocalRotation;
     RectTransform rectTransform = null;
-
-    public bool AnimationPlaying { get; private set; } = false;
 
     private void Awake()
     {
@@ -29,8 +25,6 @@ public class SubscreenAnimation : MonoBehaviour
     // Start is called before the first frame update
     void OnEnable()
     {
-        AnimationPlaying = true;
-
         // sets starting alpha to zero
         SetAlpha(0);
 
@@ -54,7 +48,6 @@ public class SubscreenAnimation : MonoBehaviour
     // sets new direction and starts rotation;
     public void CloseMenuFlip()
     {
-        AnimationPlaying = true;
         rotationDirection = 1;
         opacityTimer = 0;
     }
@@ -84,7 +77,6 @@ public class SubscreenAnimation : MonoBehaviour
                 if(rotationDirection < 0)
                 {
                     transform.RotateAround(rotationPoint, rectTransform.right, 0 - transform.localEulerAngles.x);
-                    AnimationPlaying = false;
                 }
                 if (rotationDirection > 0)
                 {
@@ -94,7 +86,6 @@ public class SubscreenAnimation : MonoBehaviour
 
                     // disables object and script, sets menu open to false if not already
                     gameObject.SetActive(false);
-                    AnimationPlaying = false;
                     enabled = false;
                 }
             }
