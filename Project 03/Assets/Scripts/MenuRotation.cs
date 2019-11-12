@@ -6,7 +6,7 @@ using System;
 public class MenuRotation : MonoBehaviour
 {
     public event Action AnimationStarted = delegate { };
-    public event Action AnimationFinished = delegate { };
+    public event Action<string> AnimationFinished = delegate { };
 
     [Header("Rotation settings")]
     [SerializeField] float rotationTime = 1f;
@@ -22,7 +22,9 @@ public class MenuRotation : MonoBehaviour
     float startPosition = 0f;
     float timer = 0;
 
+    //properties
     public bool MenuOpen { get; set; } = false;
+    public string CurrentMenu { get; private set; } = "item";   // current MENU has four states: item, equip, quest, and map
 
     #region event subscriptions
     private void OnEnable()
@@ -110,6 +112,22 @@ public class MenuRotation : MonoBehaviour
         }
     }
 
+    // TODO streamline this
+    // sets string for current menu to be read by other scripts
+    void UpdateCurrentMenu()
+    {
+        if (Mathf.Round(transform.eulerAngles.y) == 0)
+            CurrentMenu = "item";
+        if (Mathf.Round(transform.eulerAngles.y) == 90)
+            CurrentMenu = "equip";
+        if (Mathf.Round(transform.eulerAngles.y) == 180)
+            CurrentMenu = "quest";
+        if (Mathf.Round(transform.eulerAngles.y) == 270)
+            CurrentMenu = "map";
+        Debug.Log(CurrentMenu);
+    }
+
+
     // rotates menu
     void RotateMenu()
     {
@@ -130,7 +148,8 @@ public class MenuRotation : MonoBehaviour
                 rotationDirection = Vector3.zero;
 
                 // coordinates cursor
-                AnimationFinished?.Invoke();
+                UpdateCurrentMenu();
+                AnimationFinished?.Invoke(CurrentMenu);
             }
         }
     }
