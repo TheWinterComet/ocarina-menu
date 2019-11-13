@@ -124,7 +124,6 @@ public class MenuRotation : MonoBehaviour
             CurrentMenu = "quest";
         if (Mathf.Round(transform.eulerAngles.y) == 270)
             CurrentMenu = "map";
-        Debug.Log(CurrentMenu);
     }
 
 
