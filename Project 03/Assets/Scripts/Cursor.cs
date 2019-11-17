@@ -8,6 +8,8 @@ using System;
 public class Cursor : MonoBehaviour
 {
     public event Action<string> SendName = delegate { };
+    public event Action OnRIcon = delegate { };
+    public event Action OnZIcon = delegate { };
 
     [SerializeField] float cursorSearchDistance = 0.8f;
     [SerializeField] Canvas mainUICanvas = null;
@@ -15,9 +17,11 @@ public class Cursor : MonoBehaviour
 
     // necessary scripts
     PlayerInput playerInput = null;
+    MenuUIControl menuUIControl = null;
     MenuRotation menuRotation = null;
 
     // necessary components
+    Image mainCursorImage = null;
     GraphicRaycaster graphicRaycaster = null;
     PointerEventData pointerEventData = new PointerEventData(null);
 
@@ -28,8 +32,10 @@ public class Cursor : MonoBehaviour
     // caching
     private void Awake()
     {
+        mainCursorImage = GetComponent<Image>();
         graphicRaycaster = GetComponentInParent<GraphicRaycaster>();
         playerInput = FindObjectOfType<PlayerInput>();
+        menuUIControl = FindObjectOfType<MenuUIControl>();
         menuRotation = FindObjectOfType<MenuRotation>();
     }
 
@@ -38,7 +44,6 @@ public class Cursor : MonoBehaviour
     private void Start()
     {
         RaycastSearch(transform.position);
-        cursorHidden = true;
     }
 
 
@@ -51,6 +56,8 @@ public class Cursor : MonoBehaviour
         playerInput.CPress += EquipItem;
         menuRotation.AnimationStarted += HideCursor;
         menuRotation.AnimationFinished += ShowCursor;
+
+        HideCursor();
     }
 
     private void OnDisable()
@@ -91,13 +98,31 @@ public class Cursor : MonoBehaviour
             transform.Translate(translation);
 
             // calls raycast search to read an object the cursor is over
-            RaycastSearch(startingPosition);
+            bool foundItem = RaycastSearch(startingPosition);
+
+            // if no item was found (meaning it moved horizontally off the item screen, moves it to the top slot in the far row and activates UI graphic
+            if (foundItem == false)
+            {
+                do
+                {
+                    startingPosition = transform.position;
+                    transform.Translate(new Vector3(0, 1, 0));
+                }
+                while (RaycastSearch(startingPosition));
+
+                // activates the r and z icons and sets the main cursor to inactive
+                if(xInput > 0)
+                    menuUIControl.ActivateRIcon();
+                else if(xInput < 0)
+                    menuUIControl.ActivateZIcon();
+                HideCursor();
+            }
         }
     }
 
 
     // raycasts the canvas object the cursor is over to determine how the cursor moves
-    void RaycastSearch(Vector3 position)
+    bool RaycastSearch(Vector3 position)
     {
         // moves pointer event data and fires a graphic raycast
         pointerEventData.position = Camera.main.WorldToScreenPoint(transform.position);
@@ -115,44 +140,50 @@ public class Cursor : MonoBehaviour
 
                 //Debug.Log(currentItem.itemName);
                 transform.position = new Vector3(results[0].gameObject.transform.position.x, results[0].gameObject.transform.position.y, transform.position.z);
+                return true;
 
             }
             else if (results[0].gameObject.GetComponentInParent<MenuItem>() == false)
             {
                 //Debug.Log("branch 1");
                 transform.position = position;
-            }  
+                return false;
+            }
         }
         else
         {
             //Debug.Log("branch 2");
             transform.position = position;
-        }       
+            return false;
+        }
+        return false;
     }
 
 
     // activates equip function in the currently selected item if the item is active
     void EquipItem(string cButton)
     {
-        if(currentItem != null && currentItem.State == 1)
+        if(currentItem != null && cursorHidden == false && currentItem.State == 1)
             currentItem.ItemAnimation(cButton);
     }
+
 
 
     // sets cursor bool and gameobject to inactive
     void HideCursor()
     {
         cursorHidden = true;
+        mainCursorImage.enabled = false;
     }
 
 
     // makes cursor visable and movable again
-    void ShowCursor(string screen)
+    public void ShowCursor(string screen)
     {
         if(screen == "item")
         {
-            gameObject.SetActive(true);
-            currentItem = null;
+            mainCursorImage.enabled = true;
+            RaycastSearch(transform.position);
             cursorHidden = false;
         }
     }

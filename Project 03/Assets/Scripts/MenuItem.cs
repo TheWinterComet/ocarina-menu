@@ -14,7 +14,7 @@ public class MenuItem : MonoBehaviour
 
     // item components
     Text ammo = null;
-    string itemName = null;
+    public string itemName = null;
 
     PlayerInput playerInput = null;
     string equipLocation = "none";
@@ -30,20 +30,6 @@ public class MenuItem : MonoBehaviour
         playerInput = FindObjectOfType<PlayerInput>();
         ammo = GetComponentInChildren<Text>();
     }
-
-    /*
-    #region subscriptions
-    private void OnEnable()
-    {
-        playerInput.CPress += SetUnequipped;
-    }
-
-    private void OnDisable()
-    {
-        playerInput.CPress -= SetUnequipped;
-    }
-    #endregion
-    */
 
     // initializes item icon references
     public void Init(Item itemReference)
@@ -82,31 +68,9 @@ public class MenuItem : MonoBehaviour
     {
         if (equipped == false)
         {
-            // determines
-            GameObject cButtonReference = null;
-            if (cButton == "left")
-                cButtonReference = GameObject.Find("MainUI_cnv/Actions_pnl/Cleft_img");
-            if (cButton == "down")
-                cButtonReference = GameObject.Find("MainUI_cnv/Actions_pnl/Cdown_img");
-            if (cButton == "right")
-                cButtonReference = GameObject.Find("MainUI_cnv/Actions_pnl/Cright_img");
-
-            CButtonBehavior cButtonBehavior = cButtonReference.GetComponent<CButtonBehavior>();
+            CButtonBehavior cButtonBehavior = FindObjectOfType<CButtonBehavior>();
             if (cButtonBehavior != null)
-                cButtonBehavior.SpawnPrefab(transform.position, icon);
-
-            // calls to set equipped
-            SetEquipped(cButton);
+                cButtonBehavior.SpawnPrefab(transform.position, icon, cButton, Item.maxAmmo);
         }
-    }
-
-
-    // sets the equipped graphic
-    void SetEquipped(string cPress)
-    {
-        equipped = true;
-        selectedItem.enabled = true;
-        equipLocation = cPress;
-    }
-    
+    }   
 }
