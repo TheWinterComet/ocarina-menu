@@ -41,7 +41,7 @@ public class PlayerInput : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Return) && startButtonCoroutine == null)
         {
-            startButtonCoroutine = StartCoroutine(InputDelayRoutine());
+            startButtonCoroutine = StartCoroutine(StartDelayRoutine());
             StartPress?.Invoke();
         }  
     }
@@ -50,9 +50,9 @@ public class PlayerInput : MonoBehaviour
     // sends action with current cursor input from WASD
     void DetectCursorInput()
     {
-        if(Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.S))
+        if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.S))
             VerticalCursorMovement?.Invoke(Input.GetAxis("Vertical"));
-        if(Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.D))
+        if (Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.D))
             HorizontalCursorMovement?.Invoke(Input.GetAxis("Horizontal"));
     }
 
@@ -77,7 +77,7 @@ public class PlayerInput : MonoBehaviour
     }
 
 
-    IEnumerator InputDelayRoutine()
+    IEnumerator StartDelayRoutine()
     {
         yield return new WaitForSeconds(startButtonDelayTime);
         startButtonCoroutine = null;

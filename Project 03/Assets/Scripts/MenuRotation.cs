@@ -6,12 +6,14 @@ using System;
 public class MenuRotation : MonoBehaviour
 {
     public event Action AnimationStarted = delegate { };
-    public event Action<string> AnimationFinished = delegate { };
+    public event Action AnimationFinished = delegate { };
+    public event Action OpenAnimationFinished = delegate { };
 
     [Header("Rotation settings")]
     [SerializeField] float rotationTime = 1f;
     [SerializeField] float rotationDegrees = 90f;
     [SerializeField] List<GameObject> subscreens = new List<GameObject>();
+    [SerializeField] AudioSource openAudio = null, rotateAudio = null, closeAudio = null;
 
     // scripts
     PlayerInput playerInput = null;
@@ -64,7 +66,7 @@ public class MenuRotation : MonoBehaviour
 
 
     // starts rotation sequence, called with direction from playerinput
-    void StartRotation(Vector3 direction)
+    public void StartRotation(Vector3 direction)
     {
         if (rotationDirection == Vector3.zero && MenuOpen == true)
         {
@@ -73,6 +75,9 @@ public class MenuRotation : MonoBehaviour
 
             rotationDirection = direction;
             timer = rotationTime;
+
+            if (openAudio.isPlaying == false)
+                rotateAudio.Play();
         }  
     }
 
@@ -81,7 +86,9 @@ public class MenuRotation : MonoBehaviour
     {
         if (MenuOpen == false)
         {
+            // opens menu and plays audio
             MenuOpen = true;
+            openAudio.Play();
 
             // sets new starting position and rotates to the right on open
             startPosition = transform.eulerAngles.y - 90;
@@ -101,6 +108,8 @@ public class MenuRotation : MonoBehaviour
         {
             // sends action for closing, but there's no close loop, so cursor should stay hidden until next open
             AnimationStarted?.Invoke();
+
+            closeAudio.Play();
 
             // activates close menu function in each subscreen
             foreach (GameObject screen in subscreens)
@@ -148,7 +157,8 @@ public class MenuRotation : MonoBehaviour
 
                 // coordinates cursor
                 UpdateCurrentMenu();
-                AnimationFinished?.Invoke(CurrentMenu);
+
+                AnimationFinished?.Invoke();
             }
         }
     }

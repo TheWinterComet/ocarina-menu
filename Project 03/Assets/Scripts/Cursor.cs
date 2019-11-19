@@ -11,9 +11,10 @@ public class Cursor : MonoBehaviour
     public event Action OnRIcon = delegate { };
     public event Action OnZIcon = delegate { };
 
-    [SerializeField] float cursorSearchDistance = 0.8f;
+    [SerializeField] float cursorSearchDistance = 0.8f, cursorMovementDelayTime = 0.15f;
     [SerializeField] Canvas mainUICanvas = null;
     [SerializeField] GameObject animationPrefab = null;
+    [SerializeField] AudioSource moveAudio = null, selectAudio = null;
 
     // necessary scripts
     PlayerInput playerInput = null;
@@ -28,6 +29,8 @@ public class Cursor : MonoBehaviour
     // persistent variables
     MenuItem currentItem = null;
     bool cursorHidden = true;
+
+    Coroutine cursorCoroutine;
 
     // caching
     private void Awake()
@@ -44,6 +47,7 @@ public class Cursor : MonoBehaviour
     private void Start()
     {
         RaycastSearch(transform.position);
+        mainCursorImage.enabled = false;
     }
 
 
@@ -55,7 +59,6 @@ public class Cursor : MonoBehaviour
         playerInput.HorizontalCursorMovement += MoveHorizontal;
         playerInput.CPress += EquipItem;
         menuRotation.AnimationStarted += HideCursor;
-        menuRotation.AnimationFinished += ShowCursor;
 
         HideCursor();
     }
@@ -66,7 +69,6 @@ public class Cursor : MonoBehaviour
         playerInput.HorizontalCursorMovement -= MoveHorizontal;
         playerInput.CPress -= EquipItem;
         menuRotation.AnimationStarted -= HideCursor;
-        menuRotation.AnimationFinished -= ShowCursor;
     }
     #endregion
 
@@ -74,8 +76,11 @@ public class Cursor : MonoBehaviour
     // applies vertical axis to a positive or negative of the move distance
     void MoveVertical(float yInput)
     {
-        if (cursorHidden == false)
+        if (cursorHidden == false && cursorCoroutine == null)
         {
+            moveAudio.Play();
+            cursorCoroutine = StartCoroutine(CursorDelayRoutine());
+
             // saves starting position, moves
             Vector3 startingPosition = transform.position;
             Vector3 translation = new Vector3(0, (yInput > 0 ? 1 : -1) * cursorSearchDistance, 0);
@@ -90,8 +95,11 @@ public class Cursor : MonoBehaviour
     // applies horizontal axis rounded to a positive or negative of the move distance
     void MoveHorizontal(float xInput)
     {
-        if(cursorHidden == false)
+        if(cursorHidden == false && cursorCoroutine == null)
         {
+            moveAudio.Play();
+            cursorCoroutine = StartCoroutine(CursorDelayRoutine());
+
             // saves starting position, moves
             Vector3 startingPosition = transform.position;
             Vector3 translation = new Vector3((xInput > 0 ? 1 : -1) * cursorSearchDistance, 0, 0);
@@ -164,7 +172,11 @@ public class Cursor : MonoBehaviour
     void EquipItem(string cButton)
     {
         if(currentItem != null && cursorHidden == false && currentItem.State == 1)
+        {
+            selectAudio.Play();
             currentItem.ItemAnimation(cButton);
+        }
+            
     }
 
 
@@ -178,13 +190,20 @@ public class Cursor : MonoBehaviour
 
 
     // makes cursor visable and movable again
-    public void ShowCursor(string screen)
+    public void ShowCursor()
     {
-        if(screen == "item")
-        {
-            mainCursorImage.enabled = true;
-            RaycastSearch(transform.position);
-            cursorHidden = false;
-        }
+        mainCursorImage.enabled = true;
+        RaycastSearch(transform.position);
+        cursorHidden = false;
+
+        // starts cursor coroutine to prevent it from moving immediately
+        cursorCoroutine = StartCoroutine(CursorDelayRoutine());  
+    }
+
+
+    IEnumerator CursorDelayRoutine()
+    {
+        yield return new WaitForSeconds(cursorMovementDelayTime);
+        cursorCoroutine = null;
     }
 }
