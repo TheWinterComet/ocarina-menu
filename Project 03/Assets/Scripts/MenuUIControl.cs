@@ -9,9 +9,15 @@ public class MenuUIControl : MonoBehaviour
     [SerializeField] Cursor cursor = null;
     [SerializeField] AudioSource moveAudio = null;
 
+    // necessary scripts
     PlayerInput playerInput = null;
     MenuRotation menuRotation = null;
+
+    // bools to track cursor position;
     bool onR = false, onZ = false;
+    
+    // bool that coordinates different actions between triggers and directional inputs
+    bool changeBool = true;
 
     private void Awake()
     {
@@ -26,6 +32,7 @@ public class MenuUIControl : MonoBehaviour
         playerInput.HorizontalCursorMovement += IconControl;
         menuRotation.AnimationStarted += HideIcons;
         menuRotation.AnimationFinished += ActivateOppositeIcon;
+        menuRotation.CloseAnimationStarted += CloseIcons;
     }
 
     private void OnDisable()
@@ -33,6 +40,7 @@ public class MenuUIControl : MonoBehaviour
         playerInput.HorizontalCursorMovement -= IconControl;
         menuRotation.AnimationStarted -= HideIcons;
         menuRotation.AnimationFinished -= ActivateOppositeIcon;
+        menuRotation.CloseAnimationStarted -= CloseIcons;
     }
     #endregion
 
@@ -44,42 +52,41 @@ public class MenuUIControl : MonoBehaviour
         ZCursor.enabled = false;
     }
 
+
     // manages player inputs on the icons when active
     void IconControl(float xInput)
     {
-        Debug.Log(menuRotation.CurrentMenu);
-        if (onZ == true && onR == false)
+        if(onZ|| onR)
         {
-            if (xInput > 0 && menuRotation.CurrentMenu == "item")
+            // if the cursor is moving in the direction of either icon, rotates menu, sets changeBool to false so it doesn't automatically select right
+            if(xInput < 0 && onZ)
             {
-                cursor.ShowCursor();
-                moveAudio.Play();
-                HideIcons();
-            }
-            else if (xInput > 0 && menuRotation.CurrentMenu != "item")
-            {
-                ActivateOppositeIcon();
-                moveAudio.Play();
-            }  
-            else if (xInput < 0)
+                changeBool = false;
                 menuRotation.StartRotation(Vector3.up);
-        }
-
-        else if(onR == true && onZ == false)
-        {
-            if (xInput < 0 && menuRotation.CurrentMenu == "item")
+            }
+            else if (xInput > 0 && onR)
             {
-                cursor.ShowCursor();
+                changeBool = false;
+                menuRotation.StartRotation(-Vector3.up);
+            }
+                
+
+            // if the cursor moves inward on the item screen, activates item cursor
+            else if (menuRotation.CurrentMenu == "item")
+            {
+                cursor.ShowCursor(xInput);
                 moveAudio.Play();
                 HideIcons();
+                CloseIcons();
             }
-            else if (xInput < 0 && menuRotation.CurrentMenu != "item")
+
+            // if the cursor moves inward on another screen, activates opposite cursor, sets changeBool to shift to right
+            else if (menuRotation.CurrentMenu != "item")
             {
+                changeBool = false;
                 ActivateOppositeIcon();
                 moveAudio.Play();
             }
-            else if (xInput > 0)
-                menuRotation.StartRotation(-Vector3.up);   
         }
     }
 
@@ -88,6 +95,7 @@ public class MenuUIControl : MonoBehaviour
     public void ActivateRIcon()
     {
         onZ = true;
+        changeBool = false;
         ActivateOppositeIcon();
     }
 
@@ -96,6 +104,7 @@ public class MenuUIControl : MonoBehaviour
     public void ActivateZIcon()
     {
         onR = true;
+        changeBool = false;
         ActivateOppositeIcon();
     }
 
@@ -103,6 +112,13 @@ public class MenuUIControl : MonoBehaviour
     // cordinates the icons to switch following the menu rotation
     void ActivateOppositeIcon()
     {
+        // if changeBool has not been set, automatically sets both to false to activate next loop (setting to right when rotated with triggers)
+        if(changeBool)
+        {
+            onR = false;
+            onZ = false;
+        }
+
         // if both cursors are inactive or Z is active, then  sets the right cursor
         if ((onR == false && onZ == false) || (onR == false && onZ == true))
         {
@@ -123,8 +139,15 @@ public class MenuUIControl : MonoBehaviour
             onR = false;
         }
 
-        Debug.Log("onZ: " + onZ);
-        Debug.Log("onR: " + onR);
+        changeBool = true;
+    }
+
+
+    // sets both icons to false on close
+    void CloseIcons()
+    {
+        onR = false;
+        onZ = false;
     }
 
 
@@ -133,16 +156,10 @@ public class MenuUIControl : MonoBehaviour
     {
         // if R is enabled, disables
         if (RCursor.enabled == true)
-        {
             RCursor.enabled = false;
-            onR = false;
-        }
         
         // if Z is enabled, disables
         if (ZCursor.enabled == true)
-        {
             ZCursor.enabled = false;
-            onZ = false;
-        }  
     }
 }

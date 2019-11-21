@@ -78,7 +78,6 @@ public class Cursor : MonoBehaviour
     {
         if (cursorHidden == false && cursorCoroutine == null)
         {
-            moveAudio.Play();
             cursorCoroutine = StartCoroutine(CursorDelayRoutine());
 
             // saves starting position, moves
@@ -97,7 +96,6 @@ public class Cursor : MonoBehaviour
     {
         if(cursorHidden == false && cursorCoroutine == null)
         {
-            moveAudio.Play();
             cursorCoroutine = StartCoroutine(CursorDelayRoutine());
 
             // saves starting position, moves
@@ -111,18 +109,15 @@ public class Cursor : MonoBehaviour
             // if no item was found (meaning it moved horizontally off the item screen, moves it to the top slot in the far row and activates UI graphic
             if (foundItem == false)
             {
-                do
-                {
-                    startingPosition = transform.position;
-                    transform.Translate(new Vector3(0, 1, 0));
-                }
-                while (RaycastSearch(startingPosition));
-
                 // activates the r and z icons and sets the main cursor to inactive
                 if(xInput > 0)
                     menuUIControl.ActivateRIcon();
                 else if(xInput < 0)
                     menuUIControl.ActivateZIcon();
+
+                // hides cursor
+                moveAudio.Play();
+                SendName?.Invoke("");
                 HideCursor();
             }
         }
@@ -148,6 +143,8 @@ public class Cursor : MonoBehaviour
 
                 //Debug.Log(currentItem.itemName);
                 transform.position = new Vector3(results[0].gameObject.transform.position.x, results[0].gameObject.transform.position.y, transform.position.z);
+                moveAudio.Play();
+                SendName?.Invoke(currentItem.itemName);
                 return true;
 
             }
@@ -180,18 +177,37 @@ public class Cursor : MonoBehaviour
     }
 
 
-
     // sets cursor bool and gameobject to inactive
     void HideCursor()
     {
+        SendName?.Invoke("");
         cursorHidden = true;
         mainCursorImage.enabled = false;
     }
 
 
     // makes cursor visable and movable again
-    public void ShowCursor()
+    public void ShowCursor(float direction)
     {
+        Vector3 startingPosition = transform.position;
+
+        // moves the cursor to the highest spot vertically
+        do
+        {
+            startingPosition = transform.position;
+            transform.Translate(new Vector3(0, 1 * cursorSearchDistance, 0));
+        }
+        while (RaycastSearch(startingPosition));
+
+        // moves the cursor to the last horizontal spot closest to the icon being moved off
+        do
+        {
+            startingPosition = transform.position;
+            transform.Translate(new Vector3((direction > 0 ? -1 : 1) * cursorSearchDistance, 0, 0));
+        }
+        while (RaycastSearch(startingPosition));
+
+        // enables cursor
         mainCursorImage.enabled = true;
         RaycastSearch(transform.position);
         cursorHidden = false;

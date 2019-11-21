@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d01b738c1de0f52418a61a4e3bdeb068, type: 3}
   m_Name: NayruItem
   m_EditorClassIdentifier: 
-  itemName: Nayru's Love
+  itemName: Nayru's Love (MP12)
   itemIcon: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
   maxAmmo: -1
   itemState: 0

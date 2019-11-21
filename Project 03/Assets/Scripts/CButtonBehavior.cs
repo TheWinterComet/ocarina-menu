@@ -21,9 +21,6 @@ public class CButtonBehavior : MonoBehaviour
     bool prefabExists = false;
     int currentAmmo = -1;
 
-    
-
-
     //caching
     private void Awake()
     {
@@ -84,13 +81,13 @@ public class CButtonBehavior : MonoBehaviour
     // sets c button graphic and destroys prefab
     void SetCButton()
     {
-        // ensures that there are no duplicate images in the cButtons
+        // ensures that there are no duplicate images or information in the cButtons
         if (CLeftImage.sprite == prefabImage.sprite)
-            CLeftImage.sprite = targetImage.sprite;
+            CheckDuplicates(CLeftImage);      
         if (CRightImage.sprite == prefabImage.sprite)
-            CRightImage.sprite = targetImage.sprite;
+            CheckDuplicates(CRightImage);
         if (CDownImage.sprite == prefabImage.sprite)
-            CDownImage.sprite = targetImage.sprite;
+            CheckDuplicates(CDownImage);
 
 
         // sets new item image
@@ -114,5 +111,12 @@ public class CButtonBehavior : MonoBehaviour
         Destroy(newPrefab);
         prefabImage = null;
         prefabExists = false;
+    }
+
+    void CheckDuplicates(Image imageToCheck)
+    {
+        imageToCheck.sprite = targetImage.sprite;
+        Text ammo = CLeftImage.GetComponentInChildren<Text>();
+        ammo.text = targetImage.GetComponentInChildren<Text>().text;
     }
 }

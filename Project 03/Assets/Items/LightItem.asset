@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d01b738c1de0f52418a61a4e3bdeb068, type: 3}
   m_Name: LightItem
   m_EditorClassIdentifier: 
-  itemName: Light Arrow
+  itemName: Light Arrow (MP4)
   itemIcon: {fileID: 21300000, guid: 7e540253344206d4b9bdb1aa2570b6f4, type: 3}
   maxAmmo: -1
   itemState: 1

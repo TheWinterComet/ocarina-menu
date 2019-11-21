@@ -7,7 +7,8 @@ public class MenuRotation : MonoBehaviour
 {
     public event Action AnimationStarted = delegate { };
     public event Action AnimationFinished = delegate { };
-    public event Action OpenAnimationFinished = delegate { };
+    public event Action CloseAnimationStarted = delegate { };
+    public event Action OpenAnimationStarted = delegate { };
 
     [Header("Rotation settings")]
     [SerializeField] float rotationTime = 1f;
@@ -27,6 +28,7 @@ public class MenuRotation : MonoBehaviour
     //properties
     public bool MenuOpen { get; set; } = false;
     public string CurrentMenu { get; private set; } = "item";   // current MENU has four states: item, equip, quest, and map
+
 
     #region event subscriptions
     private void OnEnable()
@@ -88,6 +90,7 @@ public class MenuRotation : MonoBehaviour
         {
             // opens menu and plays audio
             MenuOpen = true;
+            OpenAnimationStarted?.Invoke();
             openAudio.Play();
 
             // sets new starting position and rotates to the right on open
@@ -106,9 +109,9 @@ public class MenuRotation : MonoBehaviour
 
         else if (MenuOpen == true)
         {
-            // sends action for closing, but there's no close loop, so cursor should stay hidden until next open
+            // sends action for closing, but there's no close loop
+            CloseAnimationStarted?.Invoke();
             AnimationStarted?.Invoke();
-
             closeAudio.Play();
 
             // activates close menu function in each subscreen
@@ -117,6 +120,8 @@ public class MenuRotation : MonoBehaviour
                 SubscreenAnimation animationScript = screen.GetComponent<SubscreenAnimation>();
                 animationScript?.CloseMenuFlip();
             }
+
+            // sets bool to false after to coordinate some rotation actions
             MenuOpen = false;
         }
     }
@@ -145,19 +150,19 @@ public class MenuRotation : MonoBehaviour
             transform.Rotate(rotationDirection * degreesPerSecond * Time.deltaTime);
             timer -= Time.deltaTime;
 
+            // when timer reaches zero
             if (timer <= 0)
             {
                 // resets timer
                 timer = 0;
 
-                // resets rotation values for next rotation
+                // resets rotation values and sets position to a concrete final position
                 transform.eulerAngles = new Vector3(transform.eulerAngles.x, startPosition + (rotationDirection.y * rotationDegrees), transform.eulerAngles.z);
                 startPosition = transform.eulerAngles.y;
                 rotationDirection = Vector3.zero;
 
                 // coordinates cursor
                 UpdateCurrentMenu();
-
                 AnimationFinished?.Invoke();
             }
         }
