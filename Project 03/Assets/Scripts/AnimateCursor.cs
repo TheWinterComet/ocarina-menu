@@ -6,15 +6,70 @@ using UnityEngine.UI;
 public class AnimateCursor : MonoBehaviour
 {
     [SerializeField] float flashTime = 1f, waitTime = 0.4f;
-    [SerializeField] CanvasRenderer canvasRenderer = null;
+
+    CanvasRenderer canvasRenderer = null;
+    Cursor cursor = null;
+
+    Image animatedImage = null;
+    Coroutine flashCoroutine = null;
     float timer = 0;
 
     // caching
     private void Awake()
     {
-        StartCoroutine(FlashRoutine());
+        animatedImage = GetComponent<Image>();
+        canvasRenderer = GetComponent<CanvasRenderer>();
+        cursor = GetComponentInParent<Cursor>();
+        
     }
 
+
+    #region subscriptions
+    private void OnEnable()
+    {
+        cursor.CursorHidden += HideImage;
+        cursor.CursorShown += ShowImage;
+    }
+
+    private void OnDisable()
+    {
+        cursor.CursorHidden -= HideImage;
+        cursor.CursorShown -= ShowImage;
+    }
+    #endregion
+
+
+    // hides image to start
+    private void Start()
+    {
+        animatedImage.enabled = false;
+    }
+
+
+    // hides image
+    void HideImage()
+    {
+        if(flashCoroutine != null)
+            StopCoroutine(flashCoroutine);
+        flashCoroutine = null;
+
+        animatedImage.enabled = false;
+        canvasRenderer.SetAlpha(0);
+        timer = 0;
+    }
+
+
+    // shows image
+    void ShowImage()
+    {
+        // reneables image and starts coroutine again
+        animatedImage.enabled = true;
+        if(flashCoroutine == null)
+            flashCoroutine = StartCoroutine(FlashRoutine());
+    }
+
+
+    // flash animation for cursor object
     IEnumerator FlashRoutine()
     {
         // runs indefinitely

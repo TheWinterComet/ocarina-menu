@@ -8,8 +8,8 @@ using System;
 public class Cursor : MonoBehaviour
 {
     public event Action<string> SendName = delegate { };
-    public event Action OnRIcon = delegate { };
-    public event Action OnZIcon = delegate { };
+    public event Action CursorHidden = delegate { };
+    public event Action CursorShown = delegate { };
 
     [SerializeField] float cursorSearchDistance = 0.8f, cursorMovementDelayTime = 0.15f;
     [SerializeField] Canvas mainUICanvas = null;
@@ -119,6 +119,7 @@ public class Cursor : MonoBehaviour
                 moveAudio.Play();
                 SendName?.Invoke("");
                 HideCursor();
+                CursorHidden?.Invoke();
             }
         }
     }
@@ -182,6 +183,7 @@ public class Cursor : MonoBehaviour
     {
         SendName?.Invoke("");
         cursorHidden = true;
+        CursorHidden?.Invoke();
         mainCursorImage.enabled = false;
     }
 
@@ -211,6 +213,7 @@ public class Cursor : MonoBehaviour
         mainCursorImage.enabled = true;
         RaycastSearch(transform.position);
         cursorHidden = false;
+        CursorShown?.Invoke();
 
         // starts cursor coroutine to prevent it from moving immediately
         cursorCoroutine = StartCoroutine(CursorDelayRoutine());  

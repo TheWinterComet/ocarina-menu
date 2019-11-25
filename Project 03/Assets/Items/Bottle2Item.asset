@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d01b738c1de0f52418a61a4e3bdeb068, type: 3}
-  m_Name: BottleItem
+  m_Name: Bottle2Item
   m_EditorClassIdentifier: 
   itemName: Empty Bottle
-  itemIcon: {fileID: 21300000, guid: ba03fb7c86d57ba47b94972658f2d26b, type: 3}
+  itemIcon: {fileID: 21300000, guid: eb1c6cbbccbdee04d8272f9f02b34699, type: 3}
   maxAmmo: -1
   itemState: 1

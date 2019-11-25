@@ -2,9 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using System;
 
 public class MenuUIControl : MonoBehaviour
 {
+    public event Action<string> SendInfo = delegate { };
+
     [SerializeField] Image RCursor = null, ZCursor = null;
     [SerializeField] Cursor cursor = null;
     [SerializeField] AudioSource moveAudio = null;
@@ -56,7 +59,7 @@ public class MenuUIControl : MonoBehaviour
     // manages player inputs on the icons when active
     void IconControl(float xInput)
     {
-        if(onZ|| onR)
+        if(onZ || onR)
         {
             // if the cursor is moving in the direction of either icon, rotates menu, sets changeBool to false so it doesn't automatically select right
             if(xInput < 0 && onZ)
@@ -74,6 +77,7 @@ public class MenuUIControl : MonoBehaviour
             // if the cursor moves inward on the item screen, activates item cursor
             else if (menuRotation.CurrentMenu == "item")
             {
+                SendInfo?.Invoke("");
                 cursor.ShowCursor(xInput);
                 moveAudio.Play();
                 HideIcons();
@@ -127,6 +131,8 @@ public class MenuUIControl : MonoBehaviour
 
             ZCursor.enabled = false;
             onZ = false;
+
+            DetermineRAction();
         }
 
         // if R is active, sets Z cursor
@@ -137,6 +143,8 @@ public class MenuUIControl : MonoBehaviour
 
             RCursor.enabled = false;
             onR = false;
+
+            DetermineZAction();
         }
 
         changeBool = true;
@@ -161,5 +169,35 @@ public class MenuUIControl : MonoBehaviour
         // if Z is enabled, disables
         if (ZCursor.enabled == true)
             ZCursor.enabled = false;
+    }
+
+    void DetermineRAction()
+    {
+        string infoToSend = "";
+        if (menuRotation.CurrentMenu == "item")
+            infoToSend = "To Map";
+        else if (menuRotation.CurrentMenu == "map")
+            infoToSend = "To Quest Status";
+        else if (menuRotation.CurrentMenu == "quest")
+            infoToSend = "To Equipment";
+        else if (menuRotation.CurrentMenu == "equip")
+            infoToSend = "To Select Item";
+
+        SendInfo?.Invoke(infoToSend);
+    }
+
+    void DetermineZAction()
+    {
+        string infoToSend = "";
+        if (menuRotation.CurrentMenu == "item")
+            infoToSend = "To Equipment";
+        else if (menuRotation.CurrentMenu == "equip")
+            infoToSend = "To Quest Status";
+        else if (menuRotation.CurrentMenu == "quest")
+            infoToSend = "To Map";
+        else if (menuRotation.CurrentMenu == "map")
+            infoToSend = "To Select Item";
+        
+        SendInfo?.Invoke(infoToSend);
     }
 }
