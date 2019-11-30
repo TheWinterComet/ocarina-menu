@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: DinItem
   m_EditorClassIdentifier: 
   itemName: Din's Fire (MP6)
-  itemIcon: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
+  itemIcon: {fileID: 21300000, guid: 15cbc8049b081f84d9fdb0d42321375a, type: 3}
   maxAmmo: -1
-  itemState: 0
+  itemState: 1

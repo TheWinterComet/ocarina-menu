@@ -22,6 +22,9 @@ public class PlayerInput : MonoBehaviour
         DetectStartInput();
         DetectCButtonInput();
         DetectCursorInput();
+
+        if (Input.GetKeyDown(KeyCode.Escape))
+            Application.Quit();
     }
 
 

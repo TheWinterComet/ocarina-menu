@@ -28,6 +28,13 @@ public class CButtonBehavior : MonoBehaviour
     }
 
 
+    // if the prefab exists, moves it towards the c button
+    private void Update()
+    {
+        TransformPrefab();
+    }
+
+
     // instantiates prefab with the item icon at the point of the menu item
     public void SpawnPrefab(Vector3 start, Image icon, string cButton, int ammoCount)
     {
@@ -56,20 +63,14 @@ public class CButtonBehavior : MonoBehaviour
     }
 
 
-    // if the prefab exists, moves it towards the c button
-    private void Update()
-    {
-        TransformPrefab();
-    }
-
-
     // moves prefab (if it exists) towards a target location
     void TransformPrefab()
     {
         if (prefabExists == true)
         {
             float step = objectMovementSpeed * Time.deltaTime;
-            newPrefab.transform.position = Vector3.MoveTowards(newPrefab.transform.position, targetImage.gameObject.transform.position, step);
+            newPrefab.transform.position = Vector3.MoveTowards
+                (newPrefab.transform.position, targetImage.gameObject.transform.position, step);
 
 
             // if the item is approximately equal in position to the c button, sets the item to the button itself
@@ -77,6 +78,7 @@ public class CButtonBehavior : MonoBehaviour
                 SetCButton();
         }
     }
+
 
     // sets c button graphic and destroys prefab
     void SetCButton()

@@ -156,6 +156,8 @@ public class MenuUIControl : MonoBehaviour
     {
         onR = false;
         onZ = false;
+
+        SendInfo?.Invoke("");
     }
 
 

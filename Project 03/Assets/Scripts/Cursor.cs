@@ -133,17 +133,17 @@ public class Cursor : MonoBehaviour
         List<RaycastResult> results = new List<RaycastResult>();
         graphicRaycaster.Raycast(pointerEventData, results);
 
-        //Debug.Log(results.Count);
         // if the raycast hits, saves current item, else returns cursor to starting position
         if (results.Count > 0)
         {
             if (results[0].gameObject.GetComponentInParent<MenuItem>() == true)
             {
-                //Debug.Log(results[0].gameObject.name);
+                // stores reference to the item function
                 currentItem = results[0].gameObject.GetComponentInParent<MenuItem>();
 
-                //Debug.Log(currentItem.itemName);
-                transform.position = new Vector3(results[0].gameObject.transform.position.x, results[0].gameObject.transform.position.y, transform.position.z);
+                // transforms cursor directly to the center of the found object, plays respective feedback
+                transform.position = new Vector3
+                    (results[0].gameObject.transform.position.x, results[0].gameObject.transform.position.y, transform.position.z);
                 moveAudio.Play();
                 SendName?.Invoke(currentItem.itemName);
                 return true;
@@ -151,14 +151,14 @@ public class Cursor : MonoBehaviour
             }
             else if (results[0].gameObject.GetComponentInParent<MenuItem>() == false)
             {
-                //Debug.Log("branch 1");
+                // returns cursor to previous transform position (effectively, it doesn't move)
                 transform.position = position;
                 return false;
             }
         }
         else
         {
-            //Debug.Log("branch 2");
+            // also reverts cursor position to check errors
             transform.position = position;
             return false;
         }
