@@ -14,7 +14,7 @@ public class Cursor : MonoBehaviour
     [SerializeField] float cursorSearchDistance = 0.8f, cursorMovementDelayTime = 0.15f;
     [SerializeField] Canvas mainUICanvas = null;
     [SerializeField] GameObject animationPrefab = null;
-    [SerializeField] AudioSource moveAudio = null, selectAudio = null;
+    [SerializeField] AudioSource moveAudio = null, selectAudio = null, errorAudio = null;
 
     // necessary scripts
     PlayerInput playerInput = null;
@@ -174,7 +174,8 @@ public class Cursor : MonoBehaviour
             selectAudio.Play();
             currentItem.ItemAnimation(cButton);
         }
-            
+        else
+            errorAudio.Play();    
     }
 
 

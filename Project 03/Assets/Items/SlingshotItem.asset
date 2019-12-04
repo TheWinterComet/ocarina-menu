@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: SlingshotItem
   m_EditorClassIdentifier: 
   itemName: Slingshot
-  itemIcon: {fileID: 21300000, guid: 8c8fc9e949c0beb43b2b877361e225c5, type: 3}
+  itemIcon: {fileID: 21300000, guid: c95f2b11c71975b4191a45ea577a7945, type: 3}
   maxAmmo: 20
   itemState: 2

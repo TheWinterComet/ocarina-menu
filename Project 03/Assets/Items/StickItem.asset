@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: StickItem
   m_EditorClassIdentifier: 
   itemName: Deku Stick
-  itemIcon: {fileID: 21300000, guid: a18c24423d6b66e4c966e928a5f5580e, type: 3}
+  itemIcon: {fileID: 21300000, guid: 4be2cb6104ffd604684a3c9590c6590c, type: 3}
   maxAmmo: 10
-  itemState: 1
+  itemState: 2
