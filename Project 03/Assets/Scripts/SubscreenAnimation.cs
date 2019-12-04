@@ -22,6 +22,7 @@ public class SubscreenAnimation : MonoBehaviour
         rectTransform = GetComponent<RectTransform>();
     }
 
+
     // Start is called before the first frame update
     void OnEnable()
     {
@@ -92,6 +93,7 @@ public class SubscreenAnimation : MonoBehaviour
         }
     }
 
+    // setalpha function
     void SetAlpha(float a)
     {
         // sets the alpha of the object's renderer
