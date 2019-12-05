@@ -17,6 +17,7 @@ public class SubscreenAnimation : MonoBehaviour
     Quaternion startLocalRotation;
     RectTransform rectTransform = null;
 
+
     private void Awake()
     {
         rectTransform = GetComponent<RectTransform>();
@@ -92,6 +93,7 @@ public class SubscreenAnimation : MonoBehaviour
             }
         }
     }
+
 
     // setalpha function
     void SetAlpha(float a)

@@ -126,7 +126,6 @@ public class MenuRotation : MonoBehaviour
         }
     }
 
-    // TODO streamline this
     // sets string for current menu to be read by other scripts
     void UpdateCurrentMenu()
     {

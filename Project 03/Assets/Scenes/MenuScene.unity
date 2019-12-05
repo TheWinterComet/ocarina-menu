@@ -3920,10 +3920,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 98df3f6cf94531d48868f243981fdac8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  RCursor: {fileID: 555182228}
-  ZCursor: {fileID: 516564082}
+  rCursor: {fileID: 555182228}
+  zCursor: {fileID: 516564082}
+  rTransform: {fileID: 1824073230}
+  zTransform: {fileID: 493223806}
   cursor: {fileID: 1232217407}
   moveAudio: {fileID: 1352989077}
+  sizeModifier: 1.2
 --- !u!82 &1352989077
 AudioSource:
   m_ObjectHideFlags: 0

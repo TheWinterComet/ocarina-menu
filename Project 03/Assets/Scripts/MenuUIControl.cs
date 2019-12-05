@@ -8,14 +8,19 @@ public class MenuUIControl : MonoBehaviour
 {
     public event Action<string> SendInfo = delegate { };
 
-    [SerializeField] Image RCursor = null, ZCursor = null;
+    [Header("UI Cursor Components")]
+    [SerializeField] Image rCursor = null, zCursor = null;
+    [SerializeField] Transform rTransform = null, zTransform = null;
     [SerializeField] Cursor cursor = null;
     [SerializeField] AudioSource moveAudio = null;
+
+    [Header("UI Cursor Settings")]
+    [SerializeField] float sizeModifier = 1.2f;
 
     // necessary scripts
     PlayerInput playerInput = null;
     MenuRotation menuRotation = null;
-
+    
     // bools to track cursor position;
     bool onR = false, onZ = false;
     
@@ -51,8 +56,8 @@ public class MenuUIControl : MonoBehaviour
     // sets both cursors inactive on start
     private void Start()
     {
-        RCursor.enabled = false;
-        ZCursor.enabled = false;
+        rCursor.enabled = false;
+        zCursor.enabled = false;
     }
 
 
@@ -126,11 +131,13 @@ public class MenuUIControl : MonoBehaviour
         // if both cursors are inactive or Z is active, then  sets the right cursor
         if ((onR == false && onZ == false) || (onR == false && onZ == true))
         {
-            RCursor.enabled = true;
+            rCursor.enabled = true;
             onR = true;
+            rTransform.localScale = new Vector3(sizeModifier, sizeModifier, 1);
 
-            ZCursor.enabled = false;
+            zCursor.enabled = false;
             onZ = false;
+            zTransform.localScale = new Vector3(1, 1, 1);
 
             DetermineRAction();
         }
@@ -138,11 +145,13 @@ public class MenuUIControl : MonoBehaviour
         // if R is active, sets Z cursor
         else if (onR == true && onZ == false)
         {
-            ZCursor.enabled = true;
+            zCursor.enabled = true;
             onZ = true;
+            zTransform.localScale = new Vector3(sizeModifier, sizeModifier, 1);
 
-            RCursor.enabled = false;
+            rCursor.enabled = false;
             onR = false;
+            rTransform.localScale = new Vector3(1, 1, 1);
 
             DetermineZAction();
         }
@@ -155,7 +164,7 @@ public class MenuUIControl : MonoBehaviour
     void CloseIcons()
     {
         onR = false;
-        onZ = false;
+        onZ = false;     
 
         SendInfo?.Invoke("");
     }
@@ -165,14 +174,24 @@ public class MenuUIControl : MonoBehaviour
     void HideIcons()
     {
         // if R is enabled, disables
-        if (RCursor.enabled == true)
-            RCursor.enabled = false;
+        if (rCursor.enabled == true)
+        {
+            rTransform.localScale = new Vector3(1, 1, 1);
+            rCursor.enabled = false;
+        }
+            
         
         // if Z is enabled, disables
-        if (ZCursor.enabled == true)
-            ZCursor.enabled = false;
+        if (zCursor.enabled == true)
+        {
+            zTransform.localScale = new Vector3(1, 1, 1);
+            zCursor.enabled = false;
+        }
+            
     }
 
+
+    // sends the appropriate action command for each possible R placement
     void DetermineRAction()
     {
         string infoToSend = "";
@@ -188,6 +207,8 @@ public class MenuUIControl : MonoBehaviour
         SendInfo?.Invoke(infoToSend);
     }
 
+
+    // sends the appropriate action command for each possible Z placement
     void DetermineZAction()
     {
         string infoToSend = "";
